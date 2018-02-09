@@ -68,14 +68,14 @@ bool fCheckBlockIndex = false;
 unsigned int nCoinCacheSize = 5000;
 bool fAlerts = DEFAULT_ALERTS;
 
-unsigned int nStakeMinAge = 60 * 60 * 24 * 5;
+unsigned int nStakeMinAge = 60 * 60;
 int64_t nReserveBalance = 0;
 
 /** Fees smaller than this (in duffs) are considered zero fee (for relaying and mining)
  * We are ~100 times smaller then bitcoin now (2015-06-23), set minRelayTxFee only 10 times higher
  * so it's still 10 times lower comparing to bitcoin.
  */
-CFeeRate minRelayTxFee = CFeeRate(10000);
+CFeeRate minRelayTxFee = CFeeRate(10 * COIN);
 
 CTxMemPool mempool(::minRelayTxFee);
 
@@ -1430,10 +1430,10 @@ bool AcceptableInputs(CTxMemPool& pool, CValidationState& state, const CTransact
             }
         }
 
-        if (fRejectInsaneFee && nFees > ::minRelayTxFee.GetFee(nSize) * 1000)
+        if (fRejectInsaneFee && nFees > ::minRelayTxFee.GetFee(nSize) * 10000)
             return error("AcceptableInputs: : insane fees %s, %d > %d",
                 hash.ToString(),
-                nFees, ::minRelayTxFee.GetFee(nSize) * 1000);
+                nFees, ::minRelayTxFee.GetFee(nSize) * 10000);
 
         // Check against previous transactions
         // This is done last to help prevent CPU exhaustion denial-of-service attacks.
@@ -1612,33 +1612,27 @@ double ConvertBitsToDouble(unsigned int nBits)
 
 int64_t GetBlockValue(int nHeight, CAmount nFees, bool fBudgetBlock)
 {
+    /**
+     * Block 1: 12 Billions MOTA pre-mined
+     Block Reward:
+     Blocks 2 - 151,200 - 2500 MOTA
+     Blocks 151,201 - 302,399 - 1250 MOTA
+     Blocks 302,400 - Infinite:  1000 MOTA
+     Proof of Stake Schedule - 5% to proposals for all phases
+     95% distributed to stake wallet and master node
+     */
+
     int64_t nBudgetMultiplier = COIN;
     if (!fBudgetBlock)
         nBudgetMultiplier = COIN - (Params().GetBudgetPercent() * CENT);
 
     CAmount nSubsidy = 1000 * nBudgetMultiplier;
     if (nHeight == 1)
-        nSubsidy = CAmount(65000000) * COIN; //premine has no budget allocation
-    else if (nHeight < 123428)
-        nSubsidy = 81 * nBudgetMultiplier;   
-    else if (nHeight < 246856)
-        nSubsidy = 57 * nBudgetMultiplier;
-    else if (nHeight < 370284)
-        nSubsidy = 41 * nBudgetMultiplier;
-    else if (nHeight < 493712)
-        nSubsidy = 28 * nBudgetMultiplier;
-    else if (nHeight < 617410)
-        nSubsidy = 20 * nBudgetMultiplier;
-    else if (nHeight < 740568)
-        nSubsidy = 15 * nBudgetMultiplier;
-    else if (nHeight < 863996)
-        nSubsidy = 12.5 * nBudgetMultiplier;
-    else if (nHeight < 987424)
-        nSubsidy = 10.5 * nBudgetMultiplier;
-    else if (nHeight < 1110852)
-        nSubsidy = 9 * nBudgetMultiplier;
-    else if (nHeight < 1234280)
-        nSubsidy = 8 * nBudgetMultiplier;
+        nSubsidy = CAmount(12000000000) * COIN; //premine has no budget allocation
+    else if (nHeight < 151201)
+        nSubsidy = 2500 * nBudgetMultiplier;
+    else if (nHeight < 302400)
+        nSubsidy = 1250 * nBudgetMultiplier;
 
     return nSubsidy + nFees;
 }

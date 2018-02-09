@@ -13,7 +13,7 @@
  * for both motad and mota-qt, to make it harder for attackers to
  * target servers or GUI users specifically.
  */
-const std::string CLIENT_NAME("MOTA Core");
+const std::string CLIENT_NAME("Mota Core");
 
 /**
  * Client version number

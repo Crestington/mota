@@ -67,7 +67,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayoutCoinControl1">
           <property name="bottomMargin">
-           <number>15</number>
+           <number>10</number>
           </property>
           <item>
            <widget class="QLabel" name="labelCoinControlFeatures">
@@ -99,7 +99,7 @@
            <number>8</number>
           </property>
           <property name="bottomMargin">
-           <number>10</number>
+           <number>4</number>
           </property>
           <item>
            <widget class="QPushButton" name="pushButtonCoinControl">
@@ -107,7 +107,7 @@
              <string notr="true"/>
             </property>
             <property name="text">
-             <string>Inputs...</string>
+             <string>Open Coin Control...</string>
             </property>
             <property name="autoDefault">
              <bool>false</bool>
@@ -117,7 +117,7 @@
           <item>
            <widget class="QLabel" name="labelCoinControlAutomaticallySelected">
             <property name="text">
-             <string>automatically selected</string>
+             <string>Coins automatically selected</string>
             </property>
             <property name="margin">
              <number>5</number>
@@ -191,27 +191,27 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutCoinControl3" stretch="0,0,0,1">
              <property name="spacing">
-              <number>20</number>
+              <number>10</number>
              </property>
              <property name="topMargin">
               <number>0</number>
              </property>
              <property name="bottomMargin">
-              <number>10</number>
+              <number>4</number>
              </property>
              <item>
               <layout class="QFormLayout" name="formLayoutCoinControl1">
                <property name="horizontalSpacing">
-                <number>10</number>
+                <number>5</number>
                </property>
                <property name="verticalSpacing">
-                <number>14</number>
+                <number>5</number>
                </property>
                <property name="leftMargin">
                 <number>10</number>
                </property>
                <property name="topMargin">
-                <number>4</number>
+                <number>0</number>
                </property>
                <property name="rightMargin">
                 <number>6</number>
@@ -285,16 +285,16 @@
              <item>
               <layout class="QFormLayout" name="formLayoutCoinControl2">
                <property name="horizontalSpacing">
-                <number>10</number>
+                <number>5</number>
                </property>
                <property name="verticalSpacing">
-                <number>14</number>
+                <number>5</number>
                </property>
                <property name="leftMargin">
                 <number>6</number>
                </property>
                <property name="topMargin">
-                <number>4</number>
+                <number>0</number>
                </property>
                <property name="rightMargin">
                 <number>6</number>
@@ -365,16 +365,16 @@
              <item>
               <layout class="QFormLayout" name="formLayoutCoinControl3">
                <property name="horizontalSpacing">
-                <number>10</number>
+                <number>5</number>
                </property>
                <property name="verticalSpacing">
-                <number>14</number>
+                <number>5</number>
                </property>
                <property name="leftMargin">
                 <number>6</number>
                </property>
                <property name="topMargin">
-                <number>4</number>
+                <number>0</number>
                </property>
                <property name="rightMargin">
                 <number>6</number>
@@ -445,16 +445,16 @@
              <item>
               <layout class="QFormLayout" name="formLayoutCoinControl4">
                <property name="horizontalSpacing">
-                <number>10</number>
+                <number>5</number>
                </property>
                <property name="verticalSpacing">
-                <number>14</number>
+                <number>5</number>
                </property>
                <property name="leftMargin">
                 <number>6</number>
                </property>
                <property name="topMargin">
-                <number>4</number>
+                <number>0</number>
                </property>
                <property name="rightMargin">
                 <number>6</number>
@@ -528,18 +528,18 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayoutCoinControl4" stretch="0,0,0,0,0,0,0">
+         <layout class="QHBoxLayout" name="horizontalLayoutCoinControl4" stretch="0,0,0,0,0,0,0,0">
           <property name="spacing">
-           <number>12</number>
+           <number>6</number>
           </property>
           <property name="sizeConstraint">
            <enum>QLayout::SetDefaultConstraint</enum>
           </property>
           <property name="topMargin">
-           <number>5</number>
+           <number>0</number>
           </property>
           <property name="rightMargin">
-           <number>5</number>
+           <number>0</number>
           </property>
           <item>
            <widget class="QCheckBox" name="checkBoxCoinControlChange">
@@ -562,6 +562,12 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>300</width>
+              <height>0</height>
+             </size>
+            </property>
            </widget>
           </item>
           <item>
@@ -575,9 +581,15 @@
            <widget class="QLineEdit" name="splitBlockLineEdit">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>50</horstretch>
+              <horstretch>20</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>80</width>
+              <height>16777215</height>
+             </size>
             </property>
             <property name="placeholderText">
              <string># of outputs</string>
@@ -601,7 +613,7 @@
           <item>
            <widget class="QLabel" name="labelCoinControlChangeLabel">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -616,9 +628,22 @@
              <string/>
             </property>
             <property name="margin">
-             <number>3</number>
+             <number>0</number>
             </property>
            </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </item>
@@ -651,7 +676,7 @@
         <x>0</x>
         <y>0</y>
         <width>830</width>
-        <height>95</height>
+        <height>191</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
@@ -868,7 +893,7 @@
            <item>
             <layout class="QGridLayout" name="gridLayoutFee">
              <property name="topMargin">
-              <number>10</number>
+              <number>6</number>
              </property>
              <property name="bottomMargin">
               <number>4</number>
@@ -882,7 +907,7 @@
              <item row="2" column="4">
               <layout class="QVBoxLayout" name="verticalLayoutFee8">
                <property name="spacing">
-                <number>6</number>
+                <number>4</number>
                </property>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayoutFee13">
@@ -938,7 +963,7 @@
                  <item>
                   <widget class="QCheckBox" name="checkBoxMinimumFee">
                    <property name="toolTip">
-                    <string>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for MOTA transactions than the network can process.</string>
+                    <string>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for Mota transactions than the network can process.</string>
                    </property>
                    <property name="text">
                     <string/>
@@ -951,7 +976,7 @@
                     <bool>true</bool>
                    </property>
                    <property name="toolTip">
-                    <string>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for MOTA transactions than the network can process.</string>
+                    <string>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for Mota transactions than the network can process.</string>
                    </property>
                    <property name="text">
                     <string>(read the tooltip)</string>
@@ -997,6 +1022,12 @@
              </item>
              <item row="2" column="0">
               <layout class="QVBoxLayout" name="verticalLayoutFee9" stretch="0,1">
+               <property name="spacing">
+                <number>6</number>
+               </property>
+               <property name="topMargin">
+                <number>10</number>
+               </property>
                <item>
                 <widget class="QRadioButton" name="radioCustomFee">
                  <property name="text">
@@ -1025,7 +1056,7 @@
              <item row="1" column="4">
               <layout class="QVBoxLayout" name="verticalLayoutFee3" stretch="0,0,1">
                <property name="spacing">
-                <number>6</number>
+                <number>4</number>
                </property>
                <property name="topMargin">
                 <number>2</number>
@@ -1159,36 +1190,6 @@
                </item>
               </layout>
              </item>
-             <item row="0" column="1">
-              <widget class="QLabel" name="labelSmartFee_2">
-               <property name="text">
-                <string>Recommended</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QRadioButton" name="radioSmartFee">
-               <property name="text">
-                <string/>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">groupFee</string>
-               </attribute>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QLabel" name="labelCustomFee">
-               <property name="text">
-                <string>Custom:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="2">
               <widget class="QLabel" name="labelSmartFee">
                <property name="text">
@@ -1222,6 +1223,72 @@
                </property>
               </widget>
              </item>
+             <item row="2" column="1">
+              <layout class="QVBoxLayout" name="verticalLayout_3">
+               <property name="topMargin">
+                <number>8</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="labelCustomFee">
+                 <property name="text">
+                  <string>Custom:</string>
+                 </property>
+                 <property name="scaledContents">
+                  <bool>false</bool>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="margin">
+                  <number>0</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="0" column="1">
+              <layout class="QVBoxLayout" name="verticalLayout_4">
+               <property name="spacing">
+                <number>6</number>
+               </property>
+               <property name="topMargin">
+                <number>4</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="labelSmartFee_2">
+                 <property name="text">
+                  <string>Recommended</string>
+                 </property>
+                 <property name="margin">
+                  <number>0</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="0" column="0">
+              <layout class="QVBoxLayout" name="verticalLayout_5">
+               <property name="topMargin">
+                <number>4</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QRadioButton" name="radioSmartFee">
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                 <attribute name="buttonGroup">
+                  <string notr="true">groupFee</string>
+                 </attribute>
+                </widget>
+               </item>
+              </layout>
+             </item>
             </layout>
            </item>
            <item>
@@ -1230,7 +1297,7 @@
               <number>8</number>
              </property>
              <property name="bottomMargin">
-              <number>4</number>
+              <number>2</number>
              </property>
              <item>
               <widget class="QCheckBox" name="checkBoxFreeTx">
@@ -1385,23 +1452,17 @@
         <number>3</number>
        </property>
        <item>
-        <widget class="QCheckBox" name="checkUseObfuscation">
-         <property name="minimumSize">
-          <size>
-           <width>95</width>
-           <height>0</height>
-          </size>
+        <widget class="QCheckBox" name="checkzMOTA">
+         <property name="enabled">
+          <bool>false</bool>
          </property>
          <property name="text">
-          <string>Obfuscation</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
+          <string>Anonymized MOTA</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkSwiftTX">
+        <widget class="QCheckBox" name="checkLightX">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -1412,7 +1473,7 @@
           </size>
          </property>
          <property name="text">
-          <string>SwiftTX</string>
+          <string>LightX</string>
          </property>
         </widget>
        </item>
@@ -1450,15 +1511,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QValidatedLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>qvalidatedlineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>BitcoinAmountField</class>
    <extends>QLineEdit</extends>
    <header>bitcoinamountfield.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QValidatedLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qvalidatedlineedit.h</header>
   </customwidget>
  </customwidgets>
  <resources>
@@ -1466,7 +1527,7 @@
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="groupFee"/>
   <buttongroup name="groupCustomFee"/>
+  <buttongroup name="groupFee"/>
  </buttongroups>
 </ui>

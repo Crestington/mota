@@ -1,4 +1,5 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -46,7 +47,7 @@ static bool AppInitRawTx(int argc, char* argv[])
 
     if (argc < 2 || mapArgs.count("-?") || mapArgs.count("-help")) {
         // First part of help message is specific to this utility
-        std::string strUsage = _("Mota Core mota-tx utility version") + " " + FormatFullVersion() + "\n\n" +
+        std::string strUsage = _("Mota mota-tx utility version") + " " + FormatFullVersion() + "\n\n" +
                                _("Usage:") + "\n" +
                                "  mota-tx [options] <hex-tx> [commands]  " + _("Update hex-encoded mota transaction") + "\n" +
                                "  mota-tx [options] -create [commands]   " + _("Create hex-encoded mota transaction") + "\n" +
@@ -190,7 +191,8 @@ static void MutateTxAddInput(CMutableTransaction& tx, const string& strInput)
     uint256 txid(strTxid);
 
     static const unsigned int minTxOutSz = 9;
-    static const unsigned int maxVout = MAX_BLOCK_SIZE / minTxOutSz;
+    unsigned int nMaxSize = MAX_BLOCK_SIZE_LEGACY;
+    static const unsigned int maxVout = nMaxSize / minTxOutSz;
 
     // extract and validate vout
     string strVout = strInput.substr(pos + 1, string::npos);

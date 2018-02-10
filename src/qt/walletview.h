@@ -7,6 +7,7 @@
 
 #include "amount.h"
 #include "masternodelist.h"
+#include "masternodelistall.h"
 
 #include <QStackedWidget>
 
@@ -14,6 +15,7 @@ class BitcoinGUI;
 class ClientModel;
 class OverviewPage;
 class ReceiveCoinsDialog;
+class PrivacyDialog;
 class SendCoinsDialog;
 class SendCoinsRecipient;
 class TransactionView;
@@ -62,9 +64,11 @@ private:
     OverviewPage* overviewPage;
     QWidget* transactionsPage;
     ReceiveCoinsDialog* receiveCoinsPage;
+    PrivacyDialog* privacyPage;
     SendCoinsDialog* sendCoinsPage;
     BlockExplorer* explorerWindow;
     MasternodeList* masternodeListPage;
+    MasternodeListAll* masternodeListAllPage;
 
     TransactionView* transactionView;
 
@@ -78,8 +82,12 @@ public slots:
     void gotoHistoryPage();
     /** Switch to masternode page */
     void gotoMasternodePage();
+    /** Switch to masternode page */
+    void gotoMasternodeAllPage();
     /** Switch to explorer page */
     void gotoBlockExplorerPage();
+    /** Switch to privacy page */
+    void gotoPrivacyPage();
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
     /** Switch to send coins page */
@@ -91,7 +99,8 @@ public slots:
     void gotoVerifyMessageTab(QString addr = "");
     /** Show MultiSend Dialog */
     void gotoMultiSendDialog();
-
+    /** Show a multisig tab **/
+    void gotoMultisigDialog(int index);
     /** Show BIP 38 tool - default to Encryption tab */
     void gotoBip38Tool();
 
@@ -110,6 +119,8 @@ public slots:
     void unlockWallet();
     /** Lock wallet */
     void lockWallet();
+    /** Toggle wallet lock state */
+    void toggleLockWallet();
 
     /** Show used sending addresses */
     void usedSendingAddresses();

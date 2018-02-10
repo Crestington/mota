@@ -15,8 +15,6 @@
 #include <QMessageBox>
 #include <QTimer>
 
-CCriticalSection cs_masternodes;
-
 MasternodeList::MasternodeList(QWidget* parent) : QWidget(parent),
                                                   ui(new Ui::MasternodeList),
                                                   clientModel(0),
@@ -27,11 +25,11 @@ MasternodeList::MasternodeList(QWidget* parent) : QWidget(parent),
     ui->startButton->setEnabled(false);
 
     int columnAliasWidth = 100;
-    int columnAddressWidth = 200;
+    int columnAddressWidth = 140;
     int columnProtocolWidth = 60;
-    int columnStatusWidth = 80;
-    int columnActiveWidth = 130;
-    int columnLastSeenWidth = 130;
+    int columnStatusWidth = 70;
+    int columnActiveWidth = 100;
+    int columnLastSeenWidth = 120;
 
     ui->tableWidgetMyMasternodes->setColumnWidth(0, columnAliasWidth);
     ui->tableWidgetMyMasternodes->setColumnWidth(1, columnAddressWidth);
@@ -41,7 +39,7 @@ MasternodeList::MasternodeList(QWidget* parent) : QWidget(parent),
     ui->tableWidgetMyMasternodes->setColumnWidth(5, columnLastSeenWidth);
 
     ui->tableWidgetMyMasternodes->setContextMenuPolicy(Qt::CustomContextMenu);
-
+    
     QAction* startAliasAction = new QAction(tr("Start alias"), this);
     contextMenu = new QMenu();
     contextMenu->addAction(startAliasAction);
@@ -52,9 +50,6 @@ MasternodeList::MasternodeList(QWidget* parent) : QWidget(parent),
     connect(timer, SIGNAL(timeout()), this, SLOT(updateMyNodeList()));
     timer->start(1000);
 
-    // Fill MN list
-    fFilterUpdated = true;
-    nTimeFilterUpdated = GetTime();
 }
 
 MasternodeList::~MasternodeList()

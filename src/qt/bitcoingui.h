@@ -30,6 +30,7 @@ class UnitDisplayStatusBarControl;
 class WalletFrame;
 class WalletModel;
 class MasternodeList;
+class MasternodeListAll;
 
 class CWallet;
 
@@ -83,7 +84,7 @@ private:
 
     UnitDisplayStatusBarControl* unitDisplayControl;
     QLabel* labelStakingIcon;
-    QLabel* labelEncryptionIcon;
+    QPushButton* labelEncryptionIcon;
     QPushButton* labelConnectionsIcon;
     QLabel* labelBlocksIcon;
     QLabel* progressBarLabel;
@@ -94,6 +95,7 @@ private:
     QAction* overviewAction;
     QAction* historyAction;
     QAction* masternodeAction;
+    QAction* masternodeAllAction;
     QAction* quitAction;
     QAction* sendCoinsAction;
     QAction* usedSendingAddressesAction;
@@ -101,8 +103,12 @@ private:
     QAction* signMessageAction;
     QAction* verifyMessageAction;
     QAction* bip38ToolAction;
+    QAction* multisigCreateAction;
+    QAction* multisigSpendAction;
+    QAction* multisigSignAction;
     QAction* aboutAction;
     QAction* receiveCoinsAction;
+    QAction* privacyAction;
     QAction* optionsAction;
     QAction* toggleHideAction;
     QAction* encryptWalletAction;
@@ -201,8 +207,12 @@ private slots:
     void gotoBlockExplorerPage();
     /** Switch to masternode page */
     void gotoMasternodePage();
-    /** Switch to receive coins page */
+    /** Switch to masternode page */
+    void gotoMasternodeAllPage();
+    /** Switch to privacy page */
     void gotoReceiveCoinsPage();
+    /** Switch to receive coins page */
+    void gotoPrivacyPage();
     /** Switch to send coins page */
     void gotoSendCoinsPage(QString addr = "");
 
@@ -212,7 +222,10 @@ private slots:
     void gotoVerifyMessageTab(QString addr = "");
     /** Show MultiSend Dialog */
     void gotoMultiSendDialog();
-
+    /** Show MultiSig Dialog */
+    void gotoMultisigCreate();
+    void gotoMultisigSpend();
+    void gotoMultisigSign();
     /** Show BIP 38 tool - default to Encryption tab */
     void gotoBip38Tool();
 

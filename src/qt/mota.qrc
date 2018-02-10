@@ -22,6 +22,7 @@
         <file alias="eye_plus">res/icons/eye_plus.png</file>
         <file alias="options">res/icons/configure.png</file>
         <file alias="receiving_addresses">res/icons/receive.png</file>
+        <file alias="privacy">res/icons/privacy.png</file>
         <file alias="editpaste">res/icons/editpaste.png</file>
         <file alias="editcopy">res/icons/editcopy.png</file>
         <file alias="add">res/icons/add.png</file>
@@ -52,6 +53,13 @@
         <file alias="browse">res/icons/browse.png</file>
         <file alias="staking_active">res/icons/staking_active.png</file>
         <file alias="staking_inactive">res/icons/staking_inactive.png</file>
+        <file alias="buttonhistory">res/icons/buttonhistory.png</file>
+        <file alias="buttonoverview">res/icons/buttonoverview.png</file>
+        <file alias="buttonmasternodes">res/icons/buttonmasternodes.png</file>
+        <file alias="buttonmymasternodes">res/icons/buttonmymasternodes.png</file>
+        <file alias="buttonprivacy">res/icons/buttonprivacy.png</file>
+        <file alias="buttonsend">res/icons/buttonsend.png</file>
+        <file alias="buttonreceive">res/icons/buttonreceive.png</file>
     </qresource>
     <qresource prefix="/css">
         <file alias="default">res/css/default.css</file>
@@ -69,6 +77,8 @@
         <file alias="walletFrame">res/images/walletFrame.png</file>
         <file alias="splash">res/images/splash.png</file>
         <file alias="splash_testnet">res/images/splash_testnet.png</file>
+        <file alias="header">res/images/header.png</file>
+        <file alias="privacylogo">res/images/privacylogo.png</file>
     </qresource>
     <qresource prefix="/movies">
         <file alias="spinner-000">res/movies/spinner-000.png</file>

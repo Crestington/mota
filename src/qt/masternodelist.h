@@ -42,8 +42,6 @@ public:
 
 private:
     QMenu* contextMenu;
-    int64_t nTimeFilterUpdated;
-    bool fFilterUpdated;
 
 public Q_SLOTS:
     void updateMyMasternodeInfo(QString strAlias, QString strAddr, CMasternode* pmn);
@@ -57,7 +55,6 @@ private:
     ClientModel* clientModel;
     WalletModel* walletModel;
     CCriticalSection cs_mnlistupdate;
-    QString strCurrentFilter;
 
 private Q_SLOTS:
     void showContextMenu(const QPoint&);

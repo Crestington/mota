@@ -1,7 +1,8 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2017 The MOTA developers
+// Copyright (c) 2015-2017 The PIVX developers
+// Copyright (c) 2017 The Mota developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -135,6 +136,24 @@ vector<unsigned char> ParseHexO(const Object& o, string strKey)
     return ParseHexV(find_value(o, strKey), strKey);
 }
 
+int ParseInt(const Object& o, string strKey)
+{
+    const Value& v = find_value(o, strKey);
+    if (v.type() != int_type)
+        throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid parameter, " + strKey + "is not an int");
+
+    return v.get_int();
+}
+
+bool ParseBool(const Object& o, string strKey)
+{
+    const Value& v = find_value(o, strKey);
+    if (v.type() != bool_type)
+        throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid parameter, " + strKey + "is not a bool");
+
+    return v.get_bool();
+}
+
 
 /**
  * Note: This interface may still be subject to change.
@@ -219,10 +238,10 @@ Value stop(const Array& params, bool fHelp)
     if (fHelp || params.size() > 1)
         throw runtime_error(
             "stop\n"
-            "\nStop MOTA server.");
+            "\nStop Mota server.");
     // Shutdown will take long enough that the response should get back
     StartShutdown();
-    return "MOTA server stopping";
+    return "Mota server stopping";
 }
 
 
@@ -263,6 +282,7 @@ static const CRPCCommand vRPCCommands[] =
         {"blockchain", "verifychain", &verifychain, true, false, false},
         {"blockchain", "invalidateblock", &invalidateblock, true, true, false},
         {"blockchain", "reconsiderblock", &reconsiderblock, true, true, false},
+        {"getinvalid", "getinvalid", &getinvalid, true, true, false},
 
         /* Mining */
         {"mining", "getblocktemplate", &getblocktemplate, true, false, false},
@@ -301,12 +321,32 @@ static const CRPCCommand vRPCCommands[] =
 
         /* Mota features */
         {"mota", "masternode", &masternode, true, true, false},
-        {"mota", "masternodelist", &masternodelist, true, true, false},
+        {"mota", "listmasternodes", &listmasternodes, true, true, false},
+        {"mota", "getmasternodecount", &getmasternodecount, true, true, false},
+        {"mota", "masternodeconnect", &masternodeconnect, true, true, false},
+        {"mota", "masternodecurrent", &masternodecurrent, true, true, false},
+        {"mota", "masternodedebug", &masternodedebug, true, true, false},
+        {"mota", "startmasternode", &startmasternode, true, true, false},
+        {"mota", "createmasternodekey", &createmasternodekey, true, true, false},
+        {"mota", "getmasternodeoutputs", &getmasternodeoutputs, true, true, false},
+        {"mota", "listmasternodeconf", &listmasternodeconf, true, true, false},
+        {"mota", "getmasternodestatus", &getmasternodestatus, true, true, false},
+        {"mota", "getmasternodewinners", &getmasternodewinners, true, true, false},
+        {"mota", "getmasternodescores", &getmasternodescores, true, true, false},
         {"mota", "mnbudget", &mnbudget, true, true, false},
-        {"mota", "mnbudgetvoteraw", &mnbudgetvoteraw, true, true, false},
+        {"mota", "preparebudget", &preparebudget, true, true, false},
+        {"mota", "submitbudget", &submitbudget, true, true, false},
+        {"mota", "mnbudgetvote", &mnbudgetvote, true, true, false},
+        {"mota", "getbudgetvotes", &getbudgetvotes, true, true, false},
+        {"mota", "getnextsuperblock", &getnextsuperblock, true, true, false},
+        {"mota", "getbudgetprojection", &getbudgetprojection, true, true, false},
+        {"mota", "getbudgetinfo", &getbudgetinfo, true, true, false},
+        {"mota", "mnbudgetrawvote", &mnbudgetrawvote, true, true, false},
         {"mota", "mnfinalbudget", &mnfinalbudget, true, true, false},
+        {"mota", "checkbudgets", &checkbudgets, true, true, false},
         {"mota", "mnsync", &mnsync, true, true, false},
         {"mota", "spork", &spork, true, true, false},
+        {"mota", "getpoolinfo", &getpoolinfo, true, true, false},
 #ifdef ENABLE_WALLET
         {"mota", "obfuscation", &obfuscation, false, false, true}, /* not threadSafe because of SendMoney */
 
@@ -358,6 +398,21 @@ static const CRPCCommand vRPCCommands[] =
         {"wallet", "walletlock", &walletlock, true, false, true},
         {"wallet", "walletpassphrasechange", &walletpassphrasechange, true, false, true},
         {"wallet", "walletpassphrase", &walletpassphrase, true, false, true},
+
+        {"zerocoin", "getzerocoinbalance", &getzerocoinbalance, false, false, true},
+        {"zerocoin", "listmintedzerocoins", &listmintedzerocoins, false, false, true},
+        {"zerocoin", "listspentzerocoins", &listspentzerocoins, false, false, true},
+        {"zerocoin", "listzerocoinamounts", &listzerocoinamounts, false, false, true},
+        {"zerocoin", "mintzerocoin", &mintzerocoin, false, false, true},
+        {"zerocoin", "spendzerocoin", &spendzerocoin, false, false, true},
+        {"zerocoin", "resetmintzerocoin", &resetmintzerocoin, false, false, true},
+        {"zerocoin", "resetspentzerocoin", &resetspentzerocoin, false, false, true},
+        {"zerocoin", "getarchivedzerocoin", &getarchivedzerocoin, false, false, true},
+        {"zerocoin", "importzerocoins", &importzerocoins, false, false, true},
+        {"zerocoin", "exportzerocoins", &exportzerocoins, false, false, true},
+        {"zerocoin", "reconsiderzerocoins", &reconsiderzerocoins, false, false, true},
+        {"zerocoin", "getspentzerocoinamount", &getspentzerocoinamount, false, false, false}
+
 #endif // ENABLE_WALLET
 };
 
@@ -582,7 +637,7 @@ void StartRPCThreads()
                                                "The username and password MUST NOT be the same.\n"
                                                "If the file does not exist, create it with owner-readable-only file permissions.\n"
                                                "It is also recommended to set alertnotify so you are notified of problems;\n"
-                                               "for example: alertnotify=echo %%s | mail -s \"MOTA Alert\" admin@foo.com\n"),
+                                               "for example: alertnotify=echo %%s | mail -s \"Mota Alert\" admin@foo.com\n"),
                                              GetConfigFile().string(),
                                              EncodeBase58(&rand_pwd[0], &rand_pwd[0] + 32)),
             "", CClientUIInterface::MSG_ERROR | CClientUIInterface::SECURE);
@@ -1040,7 +1095,7 @@ std::string HelpExampleRpc(string methodname, string args)
 {
     return "> curl --user myusername --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", "
            "\"method\": \"" +
-           methodname + "\", \"params\": [" + args + "] }' -H 'content-type: text/plain;' http://127.0.0.1:38833/\n";
+           methodname + "\", \"params\": [" + args + "] }' -H 'content-type: text/plain;' http://127.0.0.1:48883/\n";
 }
 
 const CRPCTable tableRPC;

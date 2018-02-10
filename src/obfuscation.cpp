@@ -1,5 +1,5 @@
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2017 The MOTA developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,7 +9,7 @@
 #include "main.h"
 #include "masternodeman.h"
 #include "script/sign.h"
-#include "swifttx.h"
+#include "lightx.h"
 #include "ui_interface.h"
 #include "util.h"
 #include <boost/algorithm/string/replace.hpp>
@@ -777,7 +777,7 @@ void CObfuscationPool::ChargeRandomFees()
 
                 Being that Obfuscation has "no fees" we need to have some kind of cost associated
                 with using it to stop abuse. Otherwise it could serve as an attack vector and
-                allow endless transaction that would bloat MOTA and make it unusable. To
+                allow endless transaction that would bloat Mota and make it unusable. To
                 stop these kinds of attacks 1 in 10 successful transactions are charged. This
                 adds up to a cost of 0.001 MOTA per transaction on average.
             */
@@ -802,7 +802,7 @@ void CObfuscationPool::ChargeRandomFees()
 //
 void CObfuscationPool::CheckTimeout()
 {
-    if (!fEnableObfuscation && !fMasterNode) return;
+    if (!fEnableZeromint && !fMasterNode) return;
 
     // catching hanging sessions
     if (!fMasterNode) {
@@ -887,7 +887,7 @@ void CObfuscationPool::CheckTimeout()
 //
 void CObfuscationPool::CheckForCompleteQueue()
 {
-    if (!fEnableObfuscation && !fMasterNode) return;
+    if (!fEnableZeromint && !fMasterNode) return;
 
     /* Check to see if we're ready for submissions from clients */
     //
@@ -1146,7 +1146,7 @@ void CObfuscationPool::SendObfuscationDenominate(std::vector<CTxIn>& vin, std::v
     if (!CheckDiskSpace()) {
         UnlockCoins();
         SetNull();
-        fEnableObfuscation = false;
+        fEnableZeromint = false;
         LogPrintf("CObfuscationPool::SendObfuscationDenominate() - Not enough disk space, disabling Obfuscation.\n");
         return;
     }
@@ -1380,7 +1380,9 @@ void CObfuscationPool::ClearLastMessage()
 //
 bool CObfuscationPool::DoAutomaticDenominating(bool fDryRun)
 {
-    if (!fEnableObfuscation) return false;
+    return false;  // Disabled until Obfuscation is completely removed
+
+    if (!fEnableZeromint) return false;
     if (fMasterNode) return false;
     if (state == POOL_STATUS_ERROR || state == POOL_STATUS_SUCCESS) return false;
     if (GetEntriesCount() > 0) {
@@ -1450,7 +1452,7 @@ bool CObfuscationPool::DoAutomaticDenominating(bool fDryRun)
     LogPrint("obfuscation", "DoAutomaticDenominating : nLowestDenom=%d, nBalanceNeedsAnonymized=%d\n", nLowestDenom, nBalanceNeedsAnonymized);
 
     // select coins that should be given to the pool
-    if (!pwalletMain->SelectCoinsDark(nValueMin, nBalanceNeedsAnonymized, vCoins, nValueIn, 0, nObfuscationRounds)) {
+    if (!pwalletMain->SelectCoinsDark(nValueMin, nBalanceNeedsAnonymized, vCoins, nValueIn, 0, nZeromintPercentage)) {
         nValueIn = 0;
         vCoins.clear();
 
@@ -1555,7 +1557,7 @@ bool CObfuscationPool::DoAutomaticDenominating(bool fDryRun)
                 std::vector<CTxIn> vTempCoins;
                 std::vector<COutput> vTempCoins2;
                 // Try to match their denominations if possible
-                if (!pwalletMain->SelectCoinsByDenominations(dsq.nDenom, nValueMin, nBalanceNeedsAnonymized, vTempCoins, vTempCoins2, nValueIn, 0, nObfuscationRounds)) {
+                if (!pwalletMain->SelectCoinsByDenominations(dsq.nDenom, nValueMin, nBalanceNeedsAnonymized, vTempCoins, vTempCoins2, nValueIn, 0, nZeromintPercentage)) {
                     LogPrintf("DoAutomaticDenominating --- Couldn't match denominations %d\n", dsq.nDenom);
                     continue;
                 }
@@ -1648,14 +1650,14 @@ bool CObfuscationPool::PrepareObfuscationDenominate()
     std::string strError = "";
     // Submit transaction to the pool if we get here
     // Try to use only inputs with the same number of rounds starting from lowest number of rounds possible
-    for (int i = 0; i < nObfuscationRounds; i++) {
+    for (int i = 0; i < nZeromintPercentage; i++) {
         strError = pwalletMain->PrepareObfuscationDenominate(i, i + 1);
         LogPrintf("DoAutomaticDenominating : Running Obfuscation denominate for %d rounds. Return '%s'\n", i, strError);
         if (strError == "") return true;
     }
 
     // We failed? That's strange but let's just make final attempt and try to mix everything
-    strError = pwalletMain->PrepareObfuscationDenominate(0, nObfuscationRounds);
+    strError = pwalletMain->PrepareObfuscationDenominate(0, nZeromintPercentage);
     LogPrintf("DoAutomaticDenominating : Running Obfuscation denominate for all rounds. Return '%s'\n", strError);
     if (strError == "") return true;
 
@@ -1667,8 +1669,8 @@ bool CObfuscationPool::PrepareObfuscationDenominate()
 
 bool CObfuscationPool::SendRandomPaymentToSelf()
 {
-    CAmount nBalance = pwalletMain->GetBalance();
-    CAmount nPayment = (nBalance * 0.35) + (rand() % nBalance);
+    int64_t nBalance = pwalletMain->GetBalance();
+    int64_t nPayment = (nBalance * 0.35) + (rand() % nBalance);
 
     if (nPayment > nBalance) nPayment = nBalance - (0.1 * COIN);
 
@@ -1726,16 +1728,16 @@ bool CObfuscationPool::MakeCollateralAmounts()
 
     // try to use non-denominated and not mn-like funds
     bool success = pwalletMain->CreateTransaction(vecSend, wtx, reservekeyChange,
-        nFeeRet, strFail, &coinControl, ONLY_NONDENOMINATED_NOT200000IFMN);
+        nFeeRet, strFail, &coinControl, ONLY_NONDENOMINATED_NOT10000IFMN);
     if (!success) {
         // if we failed (most likeky not enough funds), try to use all coins instead -
         // MN-like funds should not be touched in any case and we can't mix denominated without collaterals anyway
         CCoinControl* coinControlNull = NULL;
-        LogPrintf("MakeCollateralAmounts: ONLY_NONDENOMINATED_NOT200000IFMN Error - %s\n", strFail);
+        LogPrintf("MakeCollateralAmounts: ONLY_NONDENOMINATED_NOT10000IFMN Error - %s\n", strFail);
         success = pwalletMain->CreateTransaction(vecSend, wtx, reservekeyChange,
-            nFeeRet, strFail, coinControlNull, ONLY_NOT200000IFMN);
+            nFeeRet, strFail, coinControlNull, ONLY_NOT10000IFMN);
         if (!success) {
-            LogPrintf("MakeCollateralAmounts: ONLY_NOT200000IFMN Error - %s\n", strFail);
+            LogPrintf("MakeCollateralAmounts: ONLY_NOT10000IFMN Error - %s\n", strFail);
             reservekeyCollateral.ReturnKey();
             return false;
         }
@@ -1813,7 +1815,7 @@ bool CObfuscationPool::CreateDenominated(CAmount nTotalValue)
 
     CCoinControl* coinControl = NULL;
     bool success = pwalletMain->CreateTransaction(vecSend, wtx, reservekeyChange,
-        nFeeRet, strFail, coinControl, ONLY_NONDENOMINATED_NOT200000IFMN);
+        nFeeRet, strFail, coinControl, ONLY_NONDENOMINATED_NOT10000IFMN);
     if (!success) {
         LogPrintf("CreateDenominated: Error - %s\n", strFail);
         // TODO: return reservekeyDenom here
@@ -2108,9 +2110,10 @@ bool CObfuScationSigner::IsVinAssociatedWithPubkey(CTxIn& vin, CPubKey& pubkey)
     CTransaction txVin;
     uint256 hash;
     if (GetTransaction(vin.prevout.hash, txVin, hash, true)) {
-        for (CTxOut out : txVin.vout) {
-            if (out.nValue == Params().GetRequiredMasternodeCollateral())
+        BOOST_FOREACH (CTxOut out, txVin.vout) {
+            if (out.nValue == 5000 * COIN) {
                 if (out.scriptPubKey == payee2) return true;
+            }
         }
     }
 

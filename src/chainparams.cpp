@@ -1,13 +1,13 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2017 The MOTA developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Copyright (c) 2017 The Mota developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "libzerocoin/Params.h"
 #include "chainparams.h"
-
 #include "random.h"
 #include "util.h"
 #include "utilstrencodings.h"
@@ -53,30 +53,41 @@ static void convertSeed6(std::vector<CAddress>& vSeedsOut, const SeedSpec6* data
 //    timestamp before)
 // + Contains no strange transactions
 static Checkpoints::MapCheckpoints mapCheckpoints =
-    boost::assign::map_list_of(999999, uint256("0")); //update checkpoints after a few days of blocks 
+    boost::assign::map_list_of
+    (     0, uint256("9b6b907cc9670b9e96fe2671170d863cbac7a14f6c2efa98a23f778c5066bf41"));
+    
 static const Checkpoints::CCheckpointData data = {
     &mapCheckpoints,
-    1506276192, // * UNIX timestamp of last checkpoint block
-    58,    // * total number of transactions between genesis and last checkpoint
+    1504595227, // * UNIX timestamp of last checkpoint block
+    0,          // * total number of transactions between genesis and last checkpoint
                 //   (the tx=... number in the SetBestChain debug.log lines)
     2000        // * estimated number of transactions per day after checkpoint
 };
 
 static Checkpoints::MapCheckpoints mapCheckpointsTestnet =
-    boost::assign::map_list_of(0, uint256("0x001"));
+    boost::assign::map_list_of(0, uint256("0x9b6b907cc9670b9e96fe2671170d863cbac7a14f6c2efa98a23f778c5066bf41"));
 static const Checkpoints::CCheckpointData dataTestnet = {
     &mapCheckpointsTestnet,
-    1454124731,
+    1504595227,
     0,
     250};
 
 static Checkpoints::MapCheckpoints mapCheckpointsRegtest =
-    boost::assign::map_list_of(0, uint256("0x001"));
+    boost::assign::map_list_of(0, uint256("0x9b6b907cc9670b9e96fe2671170d863cbac7a14f6c2efa98a23f778c5066bf41"));
 static const Checkpoints::CCheckpointData dataRegtest = {
     &mapCheckpointsRegtest,
-    1454124731,
+    1504595227,
     0,
     100};
+
+libzerocoin::ZerocoinParams* CChainParams::Zerocoin_Params() const
+{
+    assert(this);
+    static CBigNum bnTrustedModulus(zerocoinModulus);
+    static libzerocoin::ZerocoinParams ZCParams = libzerocoin::ZerocoinParams(bnTrustedModulus);
+
+    return &ZCParams;
+}
 
 class CMainParams : public CChainParams
 {
@@ -94,28 +105,31 @@ public:
         pchMessageStart[1] = 0x4f;
         pchMessageStart[2] = 0x49;
         pchMessageStart[3] = 0x44;
-        vAlertPubKey = ParseHex("0000098d3ba6ba6e7423fa5cbd6a89e0a9a5300f88d33000005cb1a8b7ed2c1000335fc8dc4f012cb8241cc0bdafd6ca70c5f5448916e4e6f511ffffffffffffff");
-        nDefaultPort = 38832;
-        bnProofOfWorkLimit = ~uint256(0) >> 20; // Mota starting difficulty is 1 / 2^12
-        nSubsidyHalvingInterval = 1234280;
-        nMaxReorganizationDepth = 30;
-        nEnforceBlockUpgradeMajority = 750;
-        nRejectBlockOutdatedMajority = 950;
-        nToCheckBlockUpgradeMajority = 1000;
+        vAlertPubKey = ParseHex("04a983220ea7a38a7106385003fef77896538a382a0dcc389cc45f3c98751d9af423a097789757556259351198a8aaa628a1fd644c3232678c5845384c744ff8d7");
+        nDefaultPort = 48882;
+        bnProofOfWorkLimit = ~uint256(0) >> 20;
+        nSubsidyHalvingInterval = 210000;
+        nMaxReorganizationDepth = 100;
+        nEnforceBlockUpgradeMajority = 1006;
+        nRejectBlockOutdatedMajority = 1007;
+        nToCheckBlockUpgradeMajority = 1008;
         nMinerThreads = 0;
-        nTargetTimespan = 1 * 150; // Mota: 2.5 minutes
-        nTargetSpacing = 1 * 150;  // Mota: 2.5 minutes
-        nLastPOWBlock = 1234280;
-        nMaturity = 50;
+        nTargetTimespan = 1 * 60; // Mota: 1 day
+        nTargetSpacing = 1 * 60;  // Mota: 1 minute
+        nMaturity = 87;
         nMasternodeCountDrift = 20;
+        nMaxMoneyOut = 1000000000 * COIN;
+
+        /** Height or Time Based Activations **/
+        nLastPOWBlock = 1001;
         nModifierUpdateBlock = 0;
-        nMaxMoneyOut = int64_t(100000000) * COIN;
-        nModifierInterval = 60;
-        nModifierIntervalRatio = 3;
-        nBudgetPercent = 12;
-        nMinStakeAge = 60 * 60 * 24 * 5; //5 days
-        nMasternodeRewardPercent = 60; // % of block reward that goes to masternodes
-        nRequiredMasternodeCollateral = 200000 * COIN; //200,000
+        nZerocoinStartHeight = 1002;
+        nBlockEnforceSerialRange = 1004; //Enforce serial range starting this block
+        nBlockRecalculateAccumulators = 1005; //Trigger a recalculation of accumulators
+        nBlockFirstFraudulent = 1003; //First block that bad serials emerged
+        nBlockLastGoodCheckpoint = 1005; //Last valid accumulator checkpoint
+        nZerocoinStartTime = 1515434000; // January 08, 2018 05:53:20 PM
+        nBlockEnforceInvalidUTXO = 1001; //Start enforcing the invalid UTXO's
 
         /**
          * Build the genesis block. Note that the output of the genesis coinbase cannot
@@ -145,7 +159,16 @@ public:
         assert(hashGenesisBlock == uint256("0x7084c9af2c34a1179522d71ceaef27d87855365793ed9c9dd47ff4f8721462c1"));
         assert(genesis.hashMerkleRoot == uint256("0xb9c9cf09c633aa24f4e52766d6decfc20a50063a2210939ef318aefcf925e444"));
 
-        vSeeds.push_back(CDNSSeedData("", ""));     // Primary DNS Seeder
+        vSeeds.push_back(CDNSSeedData("0", "dns0.motaproject.net"));
+        vSeeds.push_back(CDNSSeedData("1", "dns1.motaproject.net"));
+        vSeeds.push_back(CDNSSeedData("2", "dns2.motaproject.net"));
+        vSeeds.push_back(CDNSSeedData("3", "dns3.motaproject.net"));
+        vSeeds.push_back(CDNSSeedData("4", "dns4.motaproject.net"));
+        vSeeds.push_back(CDNSSeedData("5", "dns5.motaproject.net"));
+        vSeeds.push_back(CDNSSeedData("6", "dns6.motaproject.net"));
+        vSeeds.push_back(CDNSSeedData("7", "dns7.motaproject.net"));
+        vSeeds.push_back(CDNSSeedData("8", "dns8.motaproject.net"));
+        vSeeds.push_back(CDNSSeedData("9", "dns9.motaproject.net"));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 70);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 85);
@@ -163,15 +186,29 @@ public:
         fDefaultConsistencyChecks = false;
         fRequireStandard = true;
         fMineBlocksOnDemand = false;
-        fSkipProofOfWorkCheck = false;
+        fSkipProofOfWorkCheck = true;
         fTestnetToBeDeprecatedFieldRPC = false;
         fHeadersFirstSyncingActive = false;
 
         nPoolMaxTransactions = 3;
+        strSporkKey = "029edc4fc53218495a1ec17ba3175653d18084deb46244ed0d5cf470e4f2f64ebc";
+        strObfuscationPoolDummyAddress = "VGbik3FETjcw3BVNXDCvQjiCa1hnAJWQzH";
+        nStartMasternodePayments = 1511349071; //Wed, 25 Jun 2014 20:36:16 GMT
 
-        strSporkKey = "0423f2b48d99f15a0bceedbe9b05a06d028aca587c3a0f0ee4a7dff6b0859181c1225b5842a17e8bb74758b8f1757a82025631f3276bec0734c6f61de71c1e4d28";
-        strObfuscationPoolDummyAddress = "C87q2gC9j6nNrnzCsg4aY6bHMLsT9nUhEw";
-        nStartMasternodePayments = 1403728576; //Wed, 25 Jun 2014 20:36:16 GMT
+        /** Zerocoin */
+        zerocoinModulus = "25195908475657893494027183240048398571429282126204032027777137836043662020707595556264018525880784"
+            "4069182906412495150821892985591491761845028084891200728449926873928072877767359714183472702618963750149718246911"
+            "6507761337985909570009733045974880842840179742910064245869181719511874612151517265463228221686998754918242243363"
+            "7259085141865462043576798423387184774447920739934236584823824281198163815010674810451660377306056201619676256133"
+            "8441436038339044149526344321901146575444541784240209246165157233507787077498171257724679629263863563732899121548"
+            "31438167899885040445364023527381951378636564391212010397122822120720357";
+        nMaxZerocoinSpendsPerTransaction = 7; // Assume about 20kb each
+        nMinZerocoinMintFee = 1 * CENT; //high fee required for zerocoin mints
+        nMintRequiredConfirmations = 20; //the maximum amount of confirmations until accumulated in 19
+        nRequiredAccumulation = 2;
+        nDefaultSecurityLevel = 100; //full security level for accumulators
+        nZerocoinHeaderVersion = 4; //Block headers must be this version once zerocoin is active
+        nBudget_Fee_Confirmations = 6; // Number of confirmations for the finalization fee
     }
 
     const Checkpoints::CCheckpointData& Checkpoints() const
@@ -195,19 +232,20 @@ public:
         pchMessageStart[1] = 0x76;
         pchMessageStart[2] = 0x65;
         pchMessageStart[3] = 0xba;
-        vAlertPubKey = ParseHex("000010e83b2703ccf322f7dbd62dd5855ac7c10bd055814ce121ba32607d573b8810c02c0582aed05b4deb9c4b77b26d92428c61256cd42774babea0a073b2ed0c9");
-        nDefaultPort = 38834;
+        vAlertPubKey = ParseHex("029edc4fc53218495a1ec17ba3175653d18084deb46244ed0d5cf470e4f2f64ebc");
+        nDefaultPort = 48884;
         nEnforceBlockUpgradeMajority = 51;
         nRejectBlockOutdatedMajority = 75;
         nToCheckBlockUpgradeMajority = 100;
         nMinerThreads = 0;
         nTargetTimespan = 1 * 60; // Mota: 1 day
         nTargetSpacing = 1 * 60;  // Mota: 1 minute
-        nLastPOWBlock = 200000;
+        nLastPOWBlock = 200;
         nMaturity = 15;
         nMasternodeCountDrift = 4;
-        nModifierUpdateBlock = 2500; //approx Mon, 17 Apr 2017 04:00:00 GMT
-        nMaxMoneyOut = 100000000 * COIN;
+        nModifierUpdateBlock = 51197; //approx Mon, 17 Apr 2017 04:00:00 GMT
+        nMaxMoneyOut = 43199500 * COIN;
+        nZerocoinStartHeight = 201576;
 
         //! Modify the testnet genesis block so the timestamp is valid for a later start.
         //genesis.nTime = 1426700641;
@@ -218,18 +256,16 @@ public:
 
         vFixedSeeds.clear();
         vSeeds.clear();
-        vSeeds.push_back(CDNSSeedData("", ""));
 
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 127); // Testnet crave addresses start with 'x' or 'y'
-        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 196);  // Testnet crave script addresses start with '8' or '9'
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 127); // Testnet mota addresses start with 'x' or 'y'
+        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 196);  // Testnet mota script addresses start with '8' or '9'
         base58Prefixes[SECRET_KEY] = std::vector<unsigned char>(1, 239);     // Testnet private keys start with '9' or 'c' (Bitcoin defaults)
-        // Testnet crave BIP32 pubkeys start with 'DRKV'
+        // Testnet mota BIP32 pubkeys start with 'DRKV'
         base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x35)(0x87)(0xCF).convert_to_container<std::vector<unsigned char> >();
-        // Testnet crave BIP32 prvkeys start with 'DRKP'
+        // Testnet mota BIP32 prvkeys start with 'DRKP'
         base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x35)(0x83)(0x94).convert_to_container<std::vector<unsigned char> >();
-        // Testnet crave BIP44 coin type is '1' (All coin's testnet default)
+        // Testnet mota BIP44 coin type is '1' (All coin's testnet default)
         base58Prefixes[EXT_COIN_TYPE] = boost::assign::list_of(0x01)(0x00)(0x00)(0x80).convert_to_container<std::vector<unsigned char> >();
-
 
         convertSeed6(vFixedSeeds, pnSeed6_test, ARRAYLEN(pnSeed6_test));
 
@@ -242,9 +278,11 @@ public:
         fTestnetToBeDeprecatedFieldRPC = true;
 
         nPoolMaxTransactions = 2;
-        strSporkKey = "04348C2F50F90267E64FACC65BFDC9D0EB147D090872FB97ABAE92E9A36E6CA60983E28E741F8E7277B11A7479B626AC115BA31463AC48178A5075C5A9319D4A38";
-        strObfuscationPoolDummyAddress = "y57cqfGRkekRyDRNeJiLtYVEbvhXrNbmox";
-        nStartMasternodePayments = 1420837558; //Fri, 09 Jan 2015 21:05:58 GMT
+        strSporkKey = "029edc4fc53218495a1ec17ba3175653d18084deb46244ed0d5cf470e4f2f64ebc";
+        strObfuscationPoolDummyAddress = "VGbik3FETjcw3BVNXDCvQjiCa1hnAJWQzH";
+        nStartMasternodePayments = 1505224800; //Fri, 09 Jan 2015 21:05:58 GMT
+        nBudget_Fee_Confirmations = 3; // Number of confirmations for the finalization fee. We have to make this very short 
+                                       // here because we only have a 8 block finalization window on testnet
     }
     const Checkpoints::CCheckpointData& Checkpoints() const
     {
@@ -273,15 +311,15 @@ public:
         nRejectBlockOutdatedMajority = 950;
         nToCheckBlockUpgradeMajority = 1000;
         nMinerThreads = 1;
-        nTargetTimespan = 5 * 60 * 60; // Mota: 5 day
-        nTargetSpacing = 1 * 150;        // Mota: 2.5 minutes
+        nTargetTimespan = 24 * 60 * 60; // Mota: 1 day
+        nTargetSpacing = 1 * 60;        // Mota: 1 minutes
         bnProofOfWorkLimit = ~uint256(0) >> 1;
         //genesis.nTime = 1505224800;
         //genesis.nBits = 0x1f00ffff;
         //genesis.nNonce = 17113;
 
-        hashGenesisBlock = genesis.GetHash();
-        nDefaultPort = 38836;
+        //hashGenesisBlock = genesis.GetHash();
+        nDefaultPort = 48886;
         //assert(hashGenesisBlock == uint256("0x2b1a0f66712aad59ad283662d5b919415a25921ce89511d73019107e380485bf"));
 
         vFixedSeeds.clear(); //! Testnet mode doesn't have any fixed seeds.
@@ -312,7 +350,7 @@ public:
     {
         networkID = CBaseChainParams::UNITTEST;
         strNetworkID = "unittest";
-        nDefaultPort = 51478;
+        nDefaultPort = 48888;
         vFixedSeeds.clear(); //! Unit test mode doesn't have any fixed seeds.
         vSeeds.clear();      //! Unit test mode doesn't have any DNS seeds.
 

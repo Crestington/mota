@@ -1619,26 +1619,24 @@ int64_t GetBlockValue(int nHeight, CAmount nFees, bool fBudgetBlock)
     CAmount nSubsidy = 1000 * nBudgetMultiplier;
     if (nHeight == 1)
         nSubsidy = CAmount(65000000) * COIN; //premine has no budget allocation
-    else if (nHeight < 123428)
-        nSubsidy = 81 * nBudgetMultiplier;   
-    else if (nHeight < 246856)
+    else if (nHeight < 105000)
+        nSubsidy = 114 * nBudgetMultiplier;   
+    else if (nHeight < 210000)
+        nSubsidy = 95 * nBudgetMultiplier;
+    else if (nHeight < 315000)
+        nSubsidy = 76 * nBudgetMultiplier;
+    else if (nHeight < 420000)
         nSubsidy = 57 * nBudgetMultiplier;
-    else if (nHeight < 370284)
-        nSubsidy = 41 * nBudgetMultiplier;
-    else if (nHeight < 493712)
-        nSubsidy = 28 * nBudgetMultiplier;
-    else if (nHeight < 617410)
-        nSubsidy = 20 * nBudgetMultiplier;
-    else if (nHeight < 740568)
-        nSubsidy = 15 * nBudgetMultiplier;
-    else if (nHeight < 863996)
-        nSubsidy = 12.5 * nBudgetMultiplier;
-    else if (nHeight < 987424)
-        nSubsidy = 10.5 * nBudgetMultiplier;
-    else if (nHeight < 1110852)
-        nSubsidy = 9 * nBudgetMultiplier;
-    else if (nHeight < 1234280)
-        nSubsidy = 8 * nBudgetMultiplier;
+    else if (nHeight < 525000)
+        nSubsidy = 38 * nBudgetMultiplier;
+    else if (nHeight < 630000)
+        nSubsidy = 19 * nBudgetMultiplier;
+    else if (nHeight < 735000)
+        nSubsidy = 9.5 * nBudgetMultiplier;
+    else if (nHeight < 840000)
+        nSubsidy = 4.7 * nBudgetMultiplier;
+    else if (nHeight < 2100000)
+        nSubsidy = 2 * nBudgetMultiplier;
 
     return nSubsidy + nFees;
 }
